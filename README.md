@@ -1,4 +1,4 @@
-# rag-retrieval-study
+# rag-hybrid-retrieval-evaluation
 
 A small study of retrieval quality in RAG, built by hand first and then with
 LangChain. The point is to measure retrieval separately from generation,
