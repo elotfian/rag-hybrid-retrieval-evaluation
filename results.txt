@@ -1,0 +1,12 @@
+Rank of the F1 document per question (1 = best, None = not retrieved)
+
+ manual   lc  bm25  rrf   question
+      3    3     1    2   What metric balances the trade-off between precision and recall?
+      2    2     1    1   Which metric combines precision and recall?
+      3    3     1    2   What measure takes both precision and recall into account?
+      1    1     1    1   What is the harmonic mean of precision and recall?
+
+Dense (manual)         Top-1:  25%   Recall@2:  50%   MRR: 0.54
+Dense (LangChain)      Top-1:  25%   Recall@2:  50%   MRR: 0.54
+BM25 only              Top-1: 100%   Recall@2: 100%   MRR: 1.00
+BM25 + dense (RRF)     Top-1:  50%   Recall@2: 100%   MRR: 0.75
