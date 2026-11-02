@@ -19,6 +19,9 @@ close together.
 | `manual_rag.py` | RAG written by hand: MiniLM embeddings, cosine similarity, FLAN-T5 generator |
 | `langchain_rrf.py` | LangChain version: BM25 + FAISS retrieval fused with Reciprocal Rank Fusion, OpenAI generator |
 | `eval.py` | Scores the retrievers directly on the rank of the correct document. No generation, no API key |
+| `tests/test_retrieval.py` | Three tests: RRF logic with stub retrievers, BM25 ranking, hybrid pipeline end to end |
+| `results.txt` | Output of `python eval.py` from my run |
+| `Dockerfile` | Runs the evaluation (or the tests) in a clean container |
 
 ## Pipeline
 
@@ -89,6 +92,17 @@ Reproduce with `python eval.py`. Output from my run is in `results.txt`.
 - Inspect the per-retriever rankings and RRF scores to verify the explanation
   above
 
+## Docker
+
+```bash
+docker build -t rag-hybrid-retrieval-evaluation .
+docker run --rm rag-hybrid-retrieval-evaluation                            # evaluation
+docker run --rm rag-hybrid-retrieval-evaluation python -m pytest -v        # tests
+```
+
+The evaluation needs no API key. The first run downloads the embedding model,
+so it takes a few minutes.
+
 ## Setup
 
 ```bash
@@ -106,6 +120,7 @@ Run the scripts:
 
 ```bash
 python eval.py              # no API key needed
+python -m pytest -v         # tests, no API key needed
 python manual_rag.py
 python langchain_rrf.py     # needs the key in .env
 ```

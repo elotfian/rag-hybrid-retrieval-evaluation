@@ -1,0 +1,6 @@
+.env
+.git
+.vscode
+__pycache__/
+.pytest_cache/
+results.txt
