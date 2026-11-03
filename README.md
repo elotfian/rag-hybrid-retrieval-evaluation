@@ -135,5 +135,5 @@ Run the scripts:
 python eval.py              # no API key needed
 python -m pytest -v         # tests, no API key needed
 python manual_rag.py
-python langchain_rrf.py     # needs the key in .env
+python langchain_rrf.py     # needs the OpenAI key in .env (Langfuse keys optional)
 ```
