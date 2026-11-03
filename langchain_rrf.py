@@ -12,6 +12,8 @@ from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
+from langfuse import get_client, observe
+from langfuse.langchain import CallbackHandler
 
 DOCUMENTS = [
     "Precision measures the proportion of positive predictions that are actually correct, penalizing false positives.",
@@ -53,7 +55,7 @@ def hybrid_retrieve(question: str, bm25_retriever, semantic_retriever, k0: int =
     return [doc for doc, _ in ranked[:top_n]]
 
 
-def generate(question: str, contexts: list[str], llm) -> str:
+def generate(question: str, contexts: list[str], llm, callbacks=None) -> str:
     context_text = "\n".join(f"- {c}" for c in contexts)
     prompt = f"""Use only the context below to answer the question.
 Give the shortest direct answer possible. Do not add outside knowledge.
@@ -63,10 +65,11 @@ Context:
 
 Question: {question}
 Answer:"""
-    return llm.invoke(prompt).content
+    return llm.invoke(prompt, config={"callbacks": callbacks or []}).content
 
 
 if __name__ == "__main__":
+    langfuse_handler = CallbackHandler()
     bm25_retriever, semantic_retriever = build_retrievers(DOCUMENTS)
     llm = ChatOpenAI(model="gpt-6-luna")
 
@@ -77,14 +80,20 @@ if __name__ == "__main__":
         "What is the harmonic mean of precision and recall?",
     ]
 
+    @observe(name="rag-question")
+    def answer_question(question):
+        contexts = hybrid_retrieve(question, bm25_retriever, semantic_retriever)
+        answer = generate(question, contexts, llm, callbacks=[langfuse_handler])
+        return contexts, answer
+
     for question in QUESTIONS:
         print("\n" + "=" * 80)
         print("Question:", question)
-        contexts = hybrid_retrieve(question, bm25_retriever, semantic_retriever)
+        contexts, answer = answer_question(question)
         print("Retrieved (RRF):", contexts)
-        answer = generate(question, contexts, llm)
         print("Answer:", answer)
 
+    get_client().flush()
 
 # ---------------------------------------------------------------------------
 # FINDINGS

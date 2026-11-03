@@ -22,6 +22,7 @@ close together.
 | `tests/test_retrieval.py` | Three tests: RRF logic with stub retrievers, BM25 ranking, hybrid pipeline end to end |
 | `results.txt` | Output of `python eval.py` from my run |
 | `Dockerfile` | Runs the evaluation (or the tests) in a clean container |
+| `docs/langfuse_trace.png` | Screenshot of one Langfuse trace |
 
 ## Pipeline
 
@@ -92,6 +93,17 @@ Reproduce with `python eval.py`. Output from my run is in `results.txt`.
 - Inspect the per-retriever rankings and RRF scores to verify the explanation
   above
 
+## Tracing
+
+`langchain_rrf.py` sends one trace per question to Langfuse: the question, the
+retrieved contexts, the prompt, the answer, latency and token usage.
+
+![Langfuse trace](docs/langfuse_trace.png)
+
+In this trace the model call takes 1.72 s of the 1.73 s total, so retrieval is
+negligible for latency on this corpus. To enable tracing, add your Langfuse
+keys to `.env` (see `.env.example`). `eval.py` and the tests don't need them.
+
 ## Docker
 
 ```bash
@@ -109,7 +121,8 @@ so it takes a few minutes.
 pip install -r requirements.txt
 ```
 
-Create your `.env` file from the example, then add your OpenAI key to it:
+Create your `.env` file from the example, then add your OpenAI key to it. The
+Langfuse keys are only needed for tracing in `langchain_rrf.py`.
 
 ```bash
 cp .env.example .env        # macOS / Linux
