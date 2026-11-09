@@ -106,6 +106,7 @@ if __name__ == "__main__":
 #   - evaluate retrieval on a larger paraphrase set
 #
 # Next step:
-# Rebuild the pipeline in LangChain under the same retrieval settings, then
-# compare it with hybrid retrieval and reranking approaches.
+# Rebuild the pipeline in LangChain with the same embedding model, then
+# compare dense retrieval with hybrid retrieval (BM25 + dense, combined with
+# Reciprocal Rank Fusion). Cross-encoder reranking is left as a future step.
 # ---------------------------------------------------------------------------
